@@ -7,35 +7,20 @@ namespace CalculatorTestApp.Services
     public static class ValidationVerification
     {
         [Fact]
-        public static void TooManyInputsThrowsException()
+        public static void NoMaxInputsDoesNotThrowException()
         {
-            var inMemorySettings = new Dictionary<string, string> {
-                {"Settings:MaxInputNumbers", "2"}
-            };
+            var service = new ValidationService();
 
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
-
-            var service = new ValidationService(configuration);
-
-            Assert.Throws<Exception>(() => service.ValidateInput(new List<string> { "1", "2", "5" }));
-
+            var inputList = new List<string> { "1", "2", "5", "200", "-20", "8", "15" };
+            var list = service.ValidateInput(inputList);
+            Assert.Equal(list.Select(x => x.ToString()).ToList(), inputList);
         }
 
         [Theory]
         [InlineData("a", "bcdef")]
         public static void VerifyEmptyListWhenNonIntStrings(params string[] input)
         {
-            var inMemorySettings = new Dictionary<string, string> {
-                {"Settings:MaxInputNumbers", "2"}
-            };
-
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
-
-            var service = new ValidationService(configuration);
+            var service = new ValidationService();
             var result = service.ValidateInput(input.ToList());
             Assert.Equal(new List<int>(), result);
         }
@@ -50,15 +35,7 @@ namespace CalculatorTestApp.Services
         [InlineData("-22", "")]
         public static void VerifyOnlyIntsLeftInListWithMixedInput(params string[] input)
         {
-            var inMemorySettings = new Dictionary<string, string> {
-                {"Settings:MaxInputNumbers", "2"}
-            };
-
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
-
-            var service = new ValidationService(configuration);
+            var service = new ValidationService();
             var result = service.ValidateInput(input.ToList());
             Assert.All(result, item => Assert.True(int.TryParse(item.ToString(), out int i)));
         }
