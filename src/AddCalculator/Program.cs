@@ -9,14 +9,15 @@ try
     var host = AppStartup();
     var validationService = ActivatorUtilities.GetServiceOrCreateInstance<ValidationService>(host.Services);
     var additionService = ActivatorUtilities.GetServiceOrCreateInstance<AdditionService>(host.Services);
+    var parsingService = ActivatorUtilities.GetServiceOrCreateInstance<ParsingService>(host.Services);
 
     Console.WriteLine("Please enter two numbers with a comma separator to add.");
 
     try
     {
-        // Rev 1: Add a maximum of 2 numbers
+        // Rev 3: Add newline to valid delimiters
         var input = Console.ReadLine();
-        var userList = input?.Split(new char[] { ',' }).ToList();
+        var userList = parsingService.ParseList(input);
 
         // take in user input & validate
         var list = validationService.ValidateInput(userList);

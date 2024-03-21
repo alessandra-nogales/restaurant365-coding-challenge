@@ -15,6 +15,8 @@ namespace AddCalculator.Services
         }
         public List<int> ValidateInput(List<string> userInput) {
             List<int> result = new List<int>();
+            if (userInput?.Count < 1)
+                return result;
 
             foreach (var s in userInput) { 
                 // verify is valid int, else skip it
