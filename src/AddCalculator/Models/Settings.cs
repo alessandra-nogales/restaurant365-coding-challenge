@@ -8,6 +8,6 @@ namespace AddCalculator.Models
 {
     public class Settings
     {
-        public int MaxInputNumbers { get; set; }
+        public int Min { get; set; }
     }
 }
