@@ -12,9 +12,11 @@ namespace AddCalculator.Services
     public class ValidationService : IValidationService
     {
         private readonly int? _min;
+        private readonly int? _max;
         public ValidationService(IConfiguration config) {
             var setting = config.GetSection("Settings").Get<Settings>();
             _min = setting?.Min;
+            _max = setting?.Max;
         }
         public List<int> ValidateInput(List<string> userInput) {
             List<int> result = new List<int>();
@@ -27,8 +29,10 @@ namespace AddCalculator.Services
                 // verify is valid int, else skip it
                 if(int.TryParse(s, out int i))
                 {
-                    if (i < _min) // add to erroneous list
+                    if (_min != null && i < _min) // add to erroneous list
                         lessThanMinVar.Add(i);
+                    else if (_max != null && i > _max)
+                        continue;
                     else
                         result.Add(i);
                 }

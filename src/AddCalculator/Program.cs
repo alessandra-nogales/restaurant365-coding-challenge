@@ -10,28 +10,33 @@ try
     var validationService = ActivatorUtilities.GetServiceOrCreateInstance<ValidationService>(host.Services);
     var additionService = ActivatorUtilities.GetServiceOrCreateInstance<AdditionService>(host.Services);
     var parsingService = ActivatorUtilities.GetServiceOrCreateInstance<ParsingService>(host.Services);
+    Console.CancelKeyPress += new ConsoleCancelEventHandler(cancelEventHandler);
 
-    Console.WriteLine("Please enter two numbers with a comma separator to add.");
-
-    try
+    do
     {
-        // Rev 3: Add newline to valid delimiters
-        var input = Console.ReadLine();
-        var userList = parsingService.ParseList(input);
+        Console.WriteLine("Please enter numbers with a comma separator or newline separator to add, or Ctrl+C to exit.");
 
-        // take in user input & validate
-        var list = validationService.ValidateInput(userList);
+        try
+        {
+            // Rev 3: Add newline to valid delimiters
+            var input = Console.ReadLine();
+            var userList = parsingService.ParseList(input);
 
-        // pass them into the service to add
-        var result = additionService.AddNumbers(list);
+            // take in user input & validate
+            var list = validationService.ValidateInput(userList);
 
-        // return the result
-        Console.WriteLine($"Result = {result}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex);
-    }
+            // pass them into the service to add
+            var result = additionService.AddNumbers(list);
+
+            // return the result
+            Console.WriteLine($"Result = {result}");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    } while (true);
 
 }
 catch (Exception ex)
@@ -53,4 +58,9 @@ static IHost AppStartup()
         }).Build();
     return host;
 
+}
+
+static void cancelEventHandler(object sender, ConsoleCancelEventArgs args)
+{
+    Environment.Exit(-1);
 }

@@ -8,6 +8,7 @@ namespace AddCalculator.Models
 {
     public class Settings
     {
-        public int Min { get; set; }
+        public int? Min { get; set; } = null;
+        public int? Max { get; set; } = null;    
     }
 }

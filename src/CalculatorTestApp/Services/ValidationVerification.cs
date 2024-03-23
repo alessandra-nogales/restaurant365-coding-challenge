@@ -95,5 +95,43 @@ namespace CalculatorTestApp.Services
             var result = service.ValidateInput(input.ToList());
             Assert.All(result, item => Assert.True(int.TryParse(item.ToString(), out int i)));
         }
+
+        [Fact]
+        public static void VerifyIntsOver1000AreThrownOut()
+        {
+            var inMemorySettings = new Dictionary<string, string> {
+                {"Settings:Max", "1000"}
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            var service = new ValidationService(configuration);
+            Random rnd = new Random();
+            var input = new List<int>() { rnd.Next(0,1000), rnd.Next(1001,5000), rnd.Next(0,1000), rnd.Next(1001,7000)};
+            
+            var result = service.ValidateInput(input.Select(x=>x.ToString()).ToList());
+            Assert.All(result, item => Assert.True(int.TryParse(item.ToString(), out int i) && i < 1000));
+
+        }
+
+        [Fact]
+        public static void VerifyIntsOver5000AreThrownOut()
+        {
+            var inMemorySettings = new Dictionary<string, string> {
+                {"Settings:Max", "5000"}
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+            var service = new ValidationService(configuration);
+            Random rnd = new Random();
+            var input = new List<int>() { rnd.Next(0, 1000), rnd.Next(5001, 10000), rnd.Next(0, 1000), rnd.Next(5001, 7000) };
+
+            var result = service.ValidateInput(input.Select(x => x.ToString()).ToList());
+            Assert.All(result, item => Assert.True(int.TryParse(item.ToString(), out int i) && i < 5000));
+
+        }
     }
 }
