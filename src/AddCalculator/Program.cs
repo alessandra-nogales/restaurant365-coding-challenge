@@ -14,13 +14,17 @@ try
 
     do
     {
-        Console.WriteLine("Please enter numbers with a comma separator or newline separator to add, or Ctrl+C to exit.");
+        Console.WriteLine($@"Please enter numbers with a comma separator or newline separator to add, or Ctrl+C to exit. ");
+        Console.WriteLine($@"Input optional custom delimiter (single char) with format //{{delimiter}}\n{{numbers}}");
 
         try
         {
             // Rev 3: Add newline to valid delimiters
             var input = Console.ReadLine();
-            var userList = parsingService.ParseList(input);
+            // Rev 6: support custom delimiter
+            var customDelimiter = parsingService.ParseParameters(input);
+
+            var userList = parsingService.ParseList(input, customDelimiter);
 
             // take in user input & validate
             var list = validationService.ValidateInput(userList);

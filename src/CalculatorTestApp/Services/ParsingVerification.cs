@@ -13,7 +13,7 @@ namespace CalculatorTestApp.Services
         public static void HappyPathDelimitersIntsReturnListOfStrings(string input)
         {
             var service = new ParsingService();
-            var result = service.ParseList(input);
+            var result = service.ParseList(input, null);
             Assert.NotNull(result);
         }
 
@@ -21,8 +21,30 @@ namespace CalculatorTestApp.Services
         public static void DoubleDelimitersAreParsedToEmptyStrings()
         {
             var service = new ParsingService();
-            var result = service.ParseList(@"100,-3\n,8,,12\n88");
-            Assert.Equal(result, new List<string>() { "100", "-3", "", "8","", "12", "88"});
+            var result = service.ParseList(@"100,-3\n,8,,12\n88", null);
+            Assert.Equal(new List<string>() { "100", "-3", "", "8", "", "12", "88" }, result);
+        }
+
+        [Fact]
+        public static void CustomCharDelimiterIsReturned() {
+            var service = new ParsingService();
+            var result = service.ParseParameters(@"//#\n55,4#ff#1005,3\n6,,18");
+            Assert.Equal( "#", result);
+        }
+
+        [Fact]
+        public static void EmptyCharDelimiterIsReturned()
+        {
+            var service = new ParsingService();
+            var result = service.ParseParameters(@"//\n55,4#ff#1005,3\n6,,18");
+            Assert.Equal("", result);
+        }
+
+        [Fact]
+        public static void StringDelimiterThrowsException()
+        {
+            var service = new ParsingService();
+            Assert.Throws<Exception>(() => service.ParseParameters(@"//abc\n55,4#ff#1005,3\n6,,18"));
         }
     }
 }

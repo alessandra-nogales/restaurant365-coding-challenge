@@ -8,6 +8,7 @@ namespace AddCalculator.Services.Interfaces
 {
     internal interface IParsingService
     {
-        List<string> ParseList(string input);
+        List<string> ParseList(string input, string customDelimiter);
+        string ParseParameters(string input);
     }
 }
