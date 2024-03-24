@@ -18,6 +18,13 @@ namespace AddCalculator.Services
             _min = setting?.Min;
             _max = setting?.Max;
         }
+
+        /// <summary>
+        /// Validate the numbers passed in by the user.
+        /// </summary>
+        /// <param name="userInput">string user input, already parsed with delimiters</param>
+        /// <returns>list of parsed ints</returns>
+        /// <exception cref="Exception"></exception>
         public List<int> ValidateInput(List<string> userInput) {
             List<int> result = new List<int>();
             if (userInput?.Count < 1)

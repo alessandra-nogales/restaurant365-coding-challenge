@@ -29,15 +29,24 @@ namespace CalculatorTestApp.Services
         public static void CustomCharDelimiterIsReturned() {
             var service = new ParsingService();
             var result = service.ParseParameters(@"//[#]\n55,4#ff#1005,3\n6,,18");
-            Assert.Equal( "#", result);
+            Assert.True(result.Contains("#"));
         }
 
         [Fact]
-        public static void EmptyCharDelimiterIsReturned()
+        public static void CustomDelimitersAndEmptyAreReturned()
         {
             var service = new ParsingService();
-            var result = service.ParseParameters(@"//\n55,4#ff#1005,3\n6,,18");
-            Assert.Equal("", result);
+            var result = service.ParseParameters(@"//[][,]\n55,4#ff#1005,3\n6,,18");
+            Assert.True(result.Contains("") && result.Contains(","));
+        }
+
+
+        [Fact]
+        public static void DistinctCustomDelimitersAndEmptyAreReturned()
+        {
+            var service = new ParsingService();
+            var result = service.ParseParameters(@"//[][,][...][***]\n55,4#ff#1005...88,3\n16***6,,18");
+            Assert.True(result.Contains("") && result.Contains(",") && result.Contains("...") && result.Contains("***"));
         }
 
         [Theory]

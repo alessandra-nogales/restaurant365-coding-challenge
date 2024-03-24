@@ -8,6 +8,12 @@ namespace AddCalculator.Services
         public AdditionService() { 
         
         }
+
+        /// <summary>
+        /// Perform the work to add the pre-validated numbers
+        /// </summary>
+        /// <param name="numbers"></param>
+        /// <returns>A single sum</returns>
         public int AddNumbers(List<int> numbers) {
             if(numbers?.Count == 0) return 0;
 

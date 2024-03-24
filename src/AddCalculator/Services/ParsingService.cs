@@ -10,37 +10,53 @@ namespace AddCalculator.Services
 {
     public class ParsingService : IParsingService
     {
-        private readonly Regex _delimiterRegex = new Regex($@"^[ (.) +  ]$");
-        private readonly string _pattern = $@"^[(.\.)+]$";
-
+        private readonly string _pattern = $@"\[(.*?)\]";
         public ParsingService() { }
 
-        public List<string> ParseList(string input, string customDelimiter)
+        /// <summary>
+        /// Parse out the numbers
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="customDelimiters"></param>
+        /// <returns></returns>
+        public List<string> ParseList(string input, List<string> customDelimiters)
         {
-            return input?.Split(new string[] { ",", @"\n", customDelimiter }, StringSplitOptions.TrimEntries)?.ToList();
+            var splitStr = new List<string>() { ",", @"\n" };
+            if(customDelimiters?.Count > 0)
+                splitStr.AddRange(customDelimiters);
+            return input?.Split(splitStr.ToArray(), StringSplitOptions.TrimEntries)?.ToList();
         }
 
-        public string ParseParameters(string input)
+        /// <summary>
+        /// Parse out the custom delimiters
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public List<string> ParseParameters(string input)
         {
-            string customDelimiter = String.Empty;
+            List<string> customDelimiters = new List<string>();
             if (String.IsNullOrEmpty(input))
-                return customDelimiter;
+                return customDelimiters;
 
             if (input.StartsWith("//"))
             {
-                string delimiterInput = input.Substring(2)?.Split(@"\n").FirstOrDefault();
-                if (!String.IsNullOrEmpty(delimiterInput))
+                var delimiterInputMany = input.Substring(2)?.Split(@"\n").FirstOrDefault();
+
+                var regex = new Regex(_pattern);
+                var matches = regex.Matches(delimiterInputMany);
+                // if user tries to add a delimiter without the expected format, throw exception and print correct format
+                if(!String.IsNullOrEmpty(delimiterInputMany) && matches?.Count == 0)
+                    throw new Exception($@"Delimiter must be delineated with format //[{{delimiter}}][{{delimiter}}]...\n{{numbers}}");
+
+                foreach (var d in matches.Select(x => x?.ToString()))
                 {
-                    var delimiter = Regex.Split(delimiterInput, _pattern)?.FirstOrDefault();
-                    if (delimiter.IndexOf('[') > -1 && delimiter.IndexOf(']') > -1) 
-                        customDelimiter = delimiter.Remove(delimiter.Length - 1, 1)?.Remove(0, 1); 
-                    else
-                        throw new Exception($@"Delimiter must be delineated with format //[{{delimiter}}]\n{{numbers}}");
-                    
+                    if (d.IndexOf('[') > -1 && d.IndexOf(']') > -1)
+                        customDelimiters.Add(d.Remove(d.Length - 1, 1)?.Remove(0, 1));
                 }
             }
 
-            return customDelimiter;
+            return customDelimiters.Distinct().ToList();
         }
     }
 }
