@@ -28,7 +28,7 @@ namespace CalculatorTestApp.Services
         [Fact]
         public static void CustomCharDelimiterIsReturned() {
             var service = new ParsingService();
-            var result = service.ParseParameters(@"//#\n55,4#ff#1005,3\n6,,18");
+            var result = service.ParseParameters(@"//[#]\n55,4#ff#1005,3\n6,,18");
             Assert.Equal( "#", result);
         }
 
@@ -40,11 +40,25 @@ namespace CalculatorTestApp.Services
             Assert.Equal("", result);
         }
 
-        [Fact]
-        public static void StringDelimiterThrowsException()
+        [Theory]
+        [InlineData(@"//[[]\n3,6,9[100[500")]
+        [InlineData(@"//[***]\n3,6,9***100***500")]
+        [InlineData(@"//[\.\]\n3,6,9\.\100\.\500")]
+        public static void TestDelimiterReturned(string input)
         {
             var service = new ParsingService();
-            Assert.Throws<Exception>(() => service.ParseParameters(@"//abc\n55,4#ff#1005,3\n6,,18"));
+            var result = service.ParseParameters(input);
+            
+            Assert.NotNull(result);
+        }
+
+        [Theory]
+        [InlineData(@"//***\n3,6,9***100***500")]
+        public static void InvalidFormatShouldThrowException(string input)
+        {
+            var service = new ParsingService();
+
+            Assert.Throws<Exception>(() => service.ParseParameters(input));
         }
     }
 }

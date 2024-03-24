@@ -15,7 +15,7 @@ try
     do
     {
         Console.WriteLine($@"Please enter numbers with a comma separator or newline separator to add, or Ctrl+C to exit. ");
-        Console.WriteLine($@"Input optional custom delimiter (single char) with format //{{delimiter}}\n{{numbers}}");
+        Console.WriteLine($@"Input optional custom delimiter (multiple chars) with format //[{{delimiter}}]\n{{numbers}}");
 
         try
         {

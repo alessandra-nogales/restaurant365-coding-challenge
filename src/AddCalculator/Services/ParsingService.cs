@@ -10,6 +10,8 @@ namespace AddCalculator.Services
 {
     public class ParsingService : IParsingService
     {
+        private readonly Regex _delimiterRegex = new Regex($@"^[ (.) +  ]$");
+        private readonly string _pattern = $@"^[(.\.)+]$";
 
         public ParsingService() { }
 
@@ -23,14 +25,19 @@ namespace AddCalculator.Services
             string customDelimiter = String.Empty;
             if (String.IsNullOrEmpty(input))
                 return customDelimiter;
-            
+
             if (input.StartsWith("//"))
             {
-                customDelimiter = input.Substring(2)?.Split(@"\n").FirstOrDefault();
-
-                // error out if is greater than a single char
-                if (customDelimiter.Length > 1)
-                    throw new Exception("Custom delimiter must be a single character");
+                string delimiterInput = input.Substring(2)?.Split(@"\n").FirstOrDefault();
+                if (!String.IsNullOrEmpty(delimiterInput))
+                {
+                    var delimiter = Regex.Split(delimiterInput, _pattern)?.FirstOrDefault();
+                    if (delimiter.IndexOf('[') > -1 && delimiter.IndexOf(']') > -1) 
+                        customDelimiter = delimiter.Remove(delimiter.Length - 1, 1)?.Remove(0, 1); 
+                    else
+                        throw new Exception($@"Delimiter must be delineated with format //[{{delimiter}}]\n{{numbers}}");
+                    
+                }
             }
 
             return customDelimiter;
